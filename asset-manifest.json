@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/interactive-presentation/static/css/main.8102fb27.css",
+    "main.js": "/interactive-presentation/static/js/main.3691378a.js",
+    "static/js/453.89129694.chunk.js": "/interactive-presentation/static/js/453.89129694.chunk.js",
+    "static/media/title-background.jpg": "/interactive-presentation/static/media/title-background.ce33302227adaed06c92.jpg",
+    "static/media/challenge.jpg": "/interactive-presentation/static/media/challenge.16c87f949524cb8f1cfe.jpg",
+    "static/media/cyberbullying.jpg": "/interactive-presentation/static/media/cyberbullying.01b4a7c72a3950fe0f3f.jpg",
+    "static/media/fake-news.jpg": "/interactive-presentation/static/media/fake-news.4aba27aef87529254945.jpg",
+    "static/media/opportunity.jpg": "/interactive-presentation/static/media/opportunity.8a2ba5dfe3b8fe9ef2a8.jpg",
+    "static/media/real-news.jpg": "/interactive-presentation/static/media/real-news.47ef96f353931660141a.jpg",
+    "static/media/placeholder.jpg": "/interactive-presentation/static/media/placeholder.63939d0b8f584fae17f8.jpg",
+    "index.html": "/interactive-presentation/index.html",
+    "main.8102fb27.css.map": "/interactive-presentation/static/css/main.8102fb27.css.map",
+    "main.3691378a.js.map": "/interactive-presentation/static/js/main.3691378a.js.map",
+    "453.89129694.chunk.js.map": "/interactive-presentation/static/js/453.89129694.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8102fb27.css",
+    "static/js/main.3691378a.js"
+  ]
+}
