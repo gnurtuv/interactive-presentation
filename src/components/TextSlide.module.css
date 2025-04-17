@@ -1,0 +1,195 @@
+/* src/components/TextSlide.module.css */
+
+.textContainer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: calc(var(--spacing-unit) * 2);
+  padding-left: calc(var(--spacing-unit) * 4);
+  padding-right: calc(var(--spacing-unit) * 3);
+  padding-top: calc(var(--spacing-unit) * 3);
+  padding-bottom: calc(var(--spacing-unit) * 3);
+  background: linear-gradient(
+    to bottom,
+    var(--slide-background-color) 85%,
+    hsla(211, 100%, 95%, 0.3) 100%
+  );
+}
+
+/* Viền Trái Động (giữ nguyên) */
+.textContainer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 8px;
+  height: 0;
+  background-color: var(--primary-color);
+  animation: expandBorder 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-delay: 0.1s;
+  z-index: 1;
+}
+@keyframes expandBorder {
+  from { height: 0%; }
+  to { height: 100%; }
+}
+
+/* --- Góc Trang Trí (giữ nguyên) --- */
+.corner {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  border-style: solid;
+  border-color: var(--text-color-light);
+  opacity: 0;
+  animation: fadeInCorners 0.6s ease-out forwards;
+  animation-delay: 0.8s; /* Tăng delay chút */
+  z-index: 1;
+}
+.topLeft { top: calc(var(--spacing-unit) * 1.5); left: calc(var(--spacing-unit) * 2); border-width: 2px 0 0 2px; }
+.topRight { top: calc(var(--spacing-unit) * 1.5); right: calc(var(--spacing-unit) * 1.5); border-width: 2px 2px 0 0; }
+.bottomLeft { bottom: calc(var(--spacing-unit) * 1.5); left: calc(var(--spacing-unit) * 2); border-width: 0 0 2px 2px; }
+.bottomRight { bottom: calc(var(--spacing-unit) * 1.5); right: calc(var(--spacing-unit) * 1.5); border-width: 0 2px 2px 0; }
+
+@keyframes fadeInCorners {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 0.5; transform: scale(1); }
+}
+
+/* --- Hiệu ứng Vignette (Làm tối góc) --- */
+/* Sử dụng ::after của textContainer */
+.textContainer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* Gradient tròn từ trong suốt ở tâm ra màu đen mờ ở rìa */
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0, 0, 0, 0) 50%, /* Trong suốt 50% ở giữa */
+        rgba(0, 0, 0, 0.15) 100% /* Đen mờ 15% ở rìa */
+    );
+    opacity: 0; /* Bắt đầu ẩn */
+    animation: fadeInVignette 1.5s ease-out forwards;
+    animation-delay: 1.2s; /* Xuất hiện sau cùng */
+    z-index: 0; /* Nằm dưới cùng, chỉ trên background chính */
+    pointer-events: none; /* Không bắt sự kiện chuột */
+}
+
+@keyframes fadeInVignette {
+    from { opacity: 0; }
+    to { opacity: 1; } /* Độ mờ cuối cùng của vignette */
+}
+
+
+/* --- Text và Hiệu ứng Text --- */
+.textWrapper { /* Container cho text */
+    width: 100%;
+    position: relative;
+    z-index: 2; /* Đảm bảo text và con trỏ nằm trên mọi thứ khác */
+}
+
+.text {
+  font-size: 3rem;
+  /* --- Gradient cho Text --- */
+  background: linear-gradient(
+      110deg, /* Góc của gradient */
+      var(--primary-color) 20%, /* Bắt đầu bằng màu primary */
+      var(--text-color-dark) 60% /* Chuyển sang màu text chính */
+  );
+  -webkit-background-clip: text; /* Clip background theo hình dạng text (WebKit) */
+  background-clip: text;
+  -webkit-text-fill-color: transparent; /* Làm màu chữ gốc trong suốt (WebKit) */
+  color: transparent; /* Làm màu chữ gốc trong suốt */
+  /* Fallback màu nếu trình duyệt không hỗ trợ gradient text */
+  /* color: var(--text-color-dark); */
+
+  line-height: 1.6;
+  text-align: left;
+  font-family: var(--font-family-sans);
+  font-weight: 600; /* Tăng độ đậm một chút */
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  position: relative;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Con trỏ nhấp nháy (Điều chỉnh màu cho phù hợp gradient) */
+.typingCursor::after {
+  content: '|';
+  margin-left: 3px;
+  animation: blinkCursor 0.7s step-end infinite;
+  /* Dùng màu primary cho con trỏ để nổi bật hơn */
+  color: var(--primary-color);
+  /* Hoặc giữ màu nhạt: color: var(--text-color-light); */
+  font-weight: 300; /* Mảnh hơn chút */
+  opacity: 0.8; /* Giảm độ rõ nét chút */
+}
+@keyframes blinkCursor {
+  from, to { opacity: 0; }
+  50% { opacity: 0.8; }
+}
+
+/* Gạch chân động (giữ nguyên) */
+.text span {
+  /* Cần set lại màu chữ fallback cho span vì nó sẽ đè lên gradient của thẻ p */
+  /* Nhưng vì dùng background-clip, nên thực ra không cần set lại màu ở đây */
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  background-image: linear-gradient(var(--primary-color), var(--primary-color));
+  background-repeat: no-repeat;
+  background-position: 0% 100%;
+  background-size: 0% 4px;
+  transition: background-size 0.8s ease-out;
+  transition-delay: 0.4s; /* Tăng delay chút */
+  padding-bottom: 6px;
+}
+.text span.typingDone {
+  background-size: 100% 4px;
+}
+
+/* --- Responsive (điều chỉnh padding và kích thước góc) --- */
+@media (max-width: 992px) {
+  .text { font-size: 2.6rem; line-height: 1.55; }
+  .textContainer { padding: calc(var(--spacing-unit) * 1.8); padding-left: calc(var(--spacing-unit) * 3); padding-right: calc(var(--spacing-unit) * 2); padding-top: calc(var(--spacing-unit) * 2); padding-bottom: calc(var(--spacing-unit) * 2);}
+  .textContainer::before { width: 7px; }
+  .corner { width: 22px; height: 22px; }
+  .topLeft { top: var(--spacing-unit); left: calc(var(--spacing-unit) * 1.5); border-width: 1.5px 0 0 1.5px; }
+  .topRight { top: var(--spacing-unit); right: var(--spacing-unit); border-width: 1.5px 1.5px 0 0; }
+  .bottomLeft { bottom: var(--spacing-unit); left: calc(var(--spacing-unit) * 1.5); border-width: 0 0 1.5px 1.5px; }
+  .bottomRight { bottom: var(--spacing-unit); right: var(--spacing-unit); border-width: 0 1.5px 1.5px 0; }
+  .text span { background-size: 0% 3px; padding-bottom: 5px; }
+  .text span.typingDone { background-size: 100% 3px; }
+}
+
+@media (max-width: 768px) {
+  .text { font-size: 2.1rem; line-height: 1.5; }
+  .textContainer { padding: calc(var(--spacing-unit) * 1.5); padding-left: calc(var(--spacing-unit) * 2.5); padding-right: calc(var(--spacing-unit) * 1.5); padding-top: calc(var(--spacing-unit) * 1.5); padding-bottom: calc(var(--spacing-unit) * 1.5);}
+  .textContainer::before { width: 6px; }
+  .corner { width: 18px; height: 18px; }
+  .topLeft { top: var(--spacing-unit); left: var(--spacing-unit); border-width: 1.5px 0 0 1.5px; }
+  .topRight { top: var(--spacing-unit); right: var(--spacing-unit); border-width: 1.5px 1.5px 0 0; }
+  .bottomLeft { bottom: var(--spacing-unit); left: var(--spacing-unit); border-width: 0 0 1.5px 1.5px; }
+  .bottomRight { bottom: var(--spacing-unit); right: var(--spacing-unit); border-width: 0 1.5px 1.5px 0; }
+  .text span { background-size: 0% 3px; padding-bottom: 4px; }
+  .text span.typingDone { background-size: 100% 3px; }
+}
+@media (max-width: 480px) {
+  .text { font-size: 1.7rem; line-height: 1.45; }
+   .textContainer { padding: var(--spacing-unit); padding-left: calc(var(--spacing-unit) * 2); padding-right: var(--spacing-unit) ; padding-top: var(--spacing-unit) ; padding-bottom: var(--spacing-unit) ;}
+  .textContainer::before { width: 5px; }
+   .corner { width: 15px; height: 15px; border-width: 1px !important; /* Ghi đè độ dày */ }
+  .topLeft { top: calc(var(--spacing-unit)*0.5); left: calc(var(--spacing-unit)*0.5); }
+  .topRight { top: calc(var(--spacing-unit)*0.5); right: calc(var(--spacing-unit)*0.5); }
+  .bottomLeft { bottom: calc(var(--spacing-unit)*0.5); left: calc(var(--spacing-unit)*0.5); }
+  .bottomRight { bottom: calc(var(--spacing-unit)*0.5); right: calc(var(--spacing-unit)*0.5); }
+  .text span { background-size: 0% 2px; padding-bottom: 3px; }
+  .text span.typingDone { background-size: 100% 2px; }
+}

@@ -1,0 +1,311 @@
+/* src/components/InteractivePoll.module.css (Modern Redesign) */
+
+/* Animation chung cho cả container */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+
+.pollContainer {
+  display: flex;
+  position: relative; /* <<< RẤT QUAN TRỌNG cho pseudo-elements */
+  overflow: hidden; /* Ngăn các đối tượng tràn ra ngoài hoàn toàn */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 750px;
+  padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 2);
+  /* --- Thêm viền/bóng đổ trong tinh tế --- */
+  /* border: 1px solid var(--border-color); */
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05), var(--box-shadow-light);
+  border-radius: var(--border-radius-lg);
+  background-color: rgba(255, 255, 255, 0.9); /* Nền trắng hơi mờ */
+  backdrop-filter: blur(2px); /* Blur nhẹ nền container */
+}
+
+/* --- Đối tượng trang trí bên trái (::before) --- */
+.pollContainer::before {
+  content: '';
+  position: absolute;
+  width: 150px; /* Kích thước đối tượng */
+  height: 150px;
+  left: -80px; /* Đặt lệch ra ngoài */
+  top: 15%;
+  background: radial-gradient(circle, hsla(211, 80%, 70%, 0.3) 0%, transparent 70%); /* Hình tròn mờ màu xanh */
+  border-radius: 50%;
+  z-index: 0; /* Nằm dưới cùng */
+  filter: blur(15px);
+  animation: floatLeft 12s ease-in-out infinite alternate; /* Animation di chuyển */
+}
+
+/* --- Đối tượng trang trí bên phải (::after) --- */
+.pollContainer::after {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 180px;
+  right: -70px;
+  bottom: 10%;
+  background: linear-gradient(135deg, hsla(265, 60%, 80%, 0.25), hsla(190, 70%, 85%, 0.15)); /* Gradient màu khác */
+  border-radius: 60% 40% 70% 30% / 40% 50% 30% 60%; /* Hình blob */
+  z-index: 0;
+  filter: blur(20px);
+  opacity: 0.8; /* Rõ hơn chút */
+  animation: floatRight 15s ease-in-out infinite alternate;
+  animation-delay: -2s; /* Bắt đầu ở vị trí khác trong chu kỳ animation */
+}
+
+/* Keyframes cho đối tượng bên trái */
+@keyframes floatLeft {
+  0% {
+    transform: translateY(0) translateX(0) rotate(-10deg) scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-30px) translateX(15px) rotate(10deg) scale(1.1);
+    opacity: 0.7;
+     background: radial-gradient(circle, hsla(190, 80%, 70%, 0.35) 0%, transparent 70%); /* Đổi màu nhẹ */
+  }
+}
+
+/* Keyframes cho đối tượng bên phải */
+@keyframes floatRight {
+  0% {
+    transform: translateY(0) translateX(0) rotate(5deg) scale(1);
+    opacity: 0.8;
+     border-radius: 60% 40% 70% 30% / 40% 50% 30% 60%;
+  }
+  100% {
+    transform: translateY(25px) translateX(-10px) rotate(-15deg) scale(0.95);
+    opacity: 0.6;
+     border-radius: 40% 70% 30% 60% / 60% 30% 50% 40%; /* Thay đổi hình dạng nhẹ */
+     background: linear-gradient(135deg, hsla(30, 80%, 80%, 0.3), hsla(211, 70%, 85%, 0.2)); /* Đổi màu nhẹ */
+  }
+}
+
+.question {
+  font-size: 2.4rem;
+  color: var(--text-color-dark);
+  margin-bottom: calc(var(--spacing-unit) * 3); /* Tăng khoảng cách */
+  text-align: center;
+  line-height: 1.4;
+  font-weight: 600;
+  position: relative; /* Cần để nằm trên pseudo */
+  z-index: 1;
+}
+
+.optionsList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing-unit) * 1.3); /* Tăng nhẹ khoảng cách */
+  position: relative; /* Cần để nằm trên pseudo */
+  z-index: 1;
+}
+
+.optionWrapper {
+   opacity: 0;
+   animation: fadeIn 0.5s ease-out forwards;
+   position: relative; /* Cần cho icon */
+   transition: transform 0.2s ease-out; /* Thêm transition cho isLeading */
+}
+
+/* --- Thiết kế mới cho Lựa chọn --- */
+.optionContent {
+  position: relative;
+  /* --- Nền gradient nhẹ cho lựa chọn --- */
+  background: linear-gradient(to right, #f8f9fa, #e9ecef);
+  border-radius: var(--border-radius-lg);
+  padding: calc(var(--spacing-unit) * 1.1) calc(var(--spacing-unit) * 1.8); /* Tăng nhẹ padding */
+  overflow: hidden;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, background-color 0.3s ease; /* Thêm background-color transition */
+  box-shadow: var(--box-shadow-light);
+}
+
+/* --- Hiệu ứng Hover Nâng cao --- */
+.optionContent:hover {
+  transform: translateY(-3px) scale(1.01); /* Scale nhẹ hơn */
+  box-shadow: var(--box-shadow-medium);
+  background-color: #ffffff; /* Chuyển sang nền trắng khi hover */
+}
+
+/* Text của lựa chọn */
+.optionText {
+  display: block;
+  font-size: 1.25rem; /* Giảm nhẹ */
+  color: var(--text-color-dark);
+  font-weight: 500;
+  position: relative;
+  z-index: 3;
+  pointer-events: none;
+  transition: color 0.3s ease;
+  padding-left: 0; /* Reset padding nếu có icon */
+}
+
+/* Lớp phủ kết quả */
+.resultOverlay {
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  display: flex;
+  align-items: center;
+  border-radius: inherit;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out 0.1s; /* Delay nhẹ */
+}
+
+/* Hiển thị overlay khi có kết quả */
+.optionWrapper:has(.resultBar) .resultOverlay,
+.optionWrapper.showResultsFallback .resultOverlay { /* Thêm class fallback nếu cần */
+   opacity: 1;
+}
+
+
+/* Thanh kết quả */
+.resultBar {
+  position: absolute;
+  left: 0; top: 0; bottom: 0; height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 80%, var(--info-color) 50%));
+  border-radius: inherit;
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1); /* Easing mượt hơn */
+  z-index: 1;
+  overflow: hidden; /* Để chứa shine */
+}
+
+/* --- Hiệu ứng Shimmer cho thanh bar --- */
+.resultBarShine {
+  position: absolute;
+  top: 0;
+  left: -100%; /* Bắt đầu bên ngoài */
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 0.3) 50%, /* Ánh sáng trắng mờ */
+      rgba(255, 255, 255, 0) 80%
+  );
+  transform: skewX(-25deg); /* Nghiêng ánh sáng */
+  animation: shimmer 2.5s infinite linear; /* Animation lặp lại */
+  animation-delay: 0.5s; /* Delay animation */
+  opacity: 0; /* Chỉ hiện khi thanh bar có độ rộng */
+  transition: opacity 0.2s ease;
+}
+/* Chỉ hiện shine khi bar có width */
+.resultBar[style*="width: 0%"] ~ .resultBarShine, /* Ẩn khi width là 0% */
+.resultBar:not([style*="%"]) ~ .resultBarShine { /* Ẩn khi chưa có style width */
+  opacity: 0 !important;
+  animation: none !important; /* Dừng animation */
+}
+.resultBar[style*="%"]:not([style*="width: 0%"]) ~ .resultBarShine {
+opacity: 1; /* Hiện khi có width > 0% */
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  50% { left: 100%; } /* Di chuyển qua phải */
+  100% { left: 100%; } /* Giữ ở cuối một lúc */
+}
+
+/* Text hiển thị % */
+.percentageText {
+  position: relative;
+  z-index: 2;
+  color: var(--text-color-inverted);
+  font-weight: 600; /* Đậm hơn chút */
+  font-size: 0.95rem;
+  padding: 0 calc(var(--spacing-unit) * 1.2);
+  margin-left: auto;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Nút bấm vô hình (Overlay) */
+.voteButtonOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent; /* Trong suốt */
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 5; /* Nằm trên cùng để bắt click */
+  appearance: none; /* Loại bỏ style mặc định của button */
+  -webkit-appearance: none;
+}
+
+/* --- Làm nổi bật lựa chọn cao điểm --- */
+.optionWrapper.isLeading .optionContent {
+  /* --- Thay đổi nền rõ rệt hơn --- */
+  background: linear-gradient(to right, var(--slide-background-color), #fff);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 70%, white), var(--box-shadow-medium);
+  transform: scale(1.03); /* Phóng to hơn chút */
+}
+
+/* Làm thanh bar của lựa chọn cao điểm nổi hơn */
+.optionWrapper.isLeading .resultBar {
+  background: linear-gradient(90deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 70%, var(--primary-color))); /* Dùng màu accent */
+}
+
+/* Icon cho lựa chọn dẫn đầu */
+.leadingIcon {
+  position: absolute;
+  left: calc(var(--spacing-unit) * 0.8);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1em;
+  color: var(--accent-color); /* Màu cam nhấn */
+  z-index: 4; /* Trên cả text */
+  animation: bounceIcon 0.8s ease-out;
+}
+
+@keyframes bounceIcon {
+    0%, 100% { transform: translateY(-50%) scale(1); }
+    50% { transform: translateY(-50%) scale(1.3); }
+}
+
+/* Đẩy text sang phải khi có icon */
+.optionWrapper.isLeading .optionText {
+    padding-left: calc(var(--spacing-unit) * 1.5);
+}
+
+/* Style cho các text phụ */
+.totalVotes, .instructions {
+  margin-top: calc(var(--spacing-unit) * 2);
+  font-size: 1rem;
+  color: var(--text-color-light);
+  text-align: center;
+  position: relative; /* Cần để nằm trên pseudo */
+  z-index: 1;
+}
+.totalVotes {
+    font-weight: bold;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .question { font-size: 2rem; }
+  .optionText { font-size: 1.1rem; }
+  .percentageText { font-size: 0.9rem; }
+}
+@media (max-width: 480px) {
+   .question { font-size: 1.7rem; }
+   .optionText { font-size: 1rem; }
+   .pollContainer { padding: var(--spacing-unit); }
+}
+@media (max-width: 900px) { /* Ẩn trên màn hình nhỏ hơn */
+  .pollContainer::before,
+  .pollContainer::after {
+    display: none;
+  }
+}

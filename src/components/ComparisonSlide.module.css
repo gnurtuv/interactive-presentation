@@ -1,0 +1,219 @@
+/* src/components/ComparisonSlide.module.css (Advanced Redesign) */
+
+/* --- Animations --- */
+@keyframes slideInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes zoomInVs { from { opacity: 0; transform: scale(0.5) rotate(-15deg); } to { opacity: 1; transform: scale(1) rotate(0deg); } }
+@keyframes fadeInUpReveal { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulseVs { 0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(var(--rgb-danger-color), 0.3); } 50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(var(--rgb-danger-color), 0.5); } }
+@keyframes revealContentAnim { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+/* Container chính */
+.comparisonContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* --- THAY ĐỔI JUSTIFY-CONTENT --- */
+  /* justify-content: space-between; */ /* << Bỏ dòng này */
+  justify-content: center; /* << Đổi thành center hoặc flex-start */
+  width: 100%;
+  height: 100%;
+  padding: calc(var(--spacing-unit) * 1.5) calc(var(--spacing-unit) * 1.5); /* Giảm nhẹ padding */
+  position: relative;
+  overflow: hidden;
+  /* --- Nền riêng (giữ nguyên) --- */
+  background: radial-gradient(ellipse at top left, hsla(210, 50%, 95%, 0.5), transparent 60%),
+              radial-gradient(ellipse at bottom right, hsla(30, 60%, 95%, 0.4), transparent 70%),
+              var(--slide-background-color);
+}
+
+.title {
+  font-size: 2.4rem; /* Giảm nhẹ */
+  color: var(--text-color-dark);
+  /* --- Đặt margin-bottom cố định thay vì dựa vào flex space --- */
+  margin-bottom: calc(var(--spacing-unit) * 1.5);
+  text-align: center;
+  font-weight: 600;
+  opacity: 0; /* Cho animation */
+  flex-shrink: 0; /* Ngăn tiêu đề bị co lại */
+}
+.title.slideInDown { animation: slideInDown 0.6s ease-out forwards; animation-delay: 0.1s; }
+
+.itemsWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1000px; /* Giới hạn chiều rộng tối đa */
+  gap: calc(var(--spacing-unit) * 2); /* Tăng gap để VS rõ hơn */
+  /* --- Bỏ flex-grow --- */
+  /* flex-grow: 1; */
+  margin-bottom: calc(var(--spacing-unit) * 1.5); /* Giảm margin bottom */
+  flex-shrink: 0; /* Ngăn co lại */
+}
+
+/* Panel cho từng Item */
+.itemPanel {
+  flex: 1;
+  max-width: 35%; /* Giảm nhẹ max-width */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.75); /* Tăng nhẹ độ rõ */
+  backdrop-filter: blur(5px);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-unit);
+  box-shadow: var(--box-shadow-medium);
+  border: 1px solid var(--border-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+}
+.itemPanel:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--box-shadow-large);
+}
+.itemPanel.slideInLeft { animation: slideInLeft 0.7s ease-out forwards; animation-delay: 0.3s; }
+.itemPanel.slideInRight { animation: slideInRight 0.7s ease-out forwards; animation-delay: 0.3s; }
+
+.imageContainer {
+  width: 100%;
+  /* --- THAY ĐỔI CHIỀU CAO ẢNH --- */
+  /* aspect-ratio: 1 / 1; */ /* << Bỏ aspect ratio */
+  max-height: 35vh;       /* << GIỚI HẠN CHIỀU CAO CỐ ĐỊNH */
+  margin-bottom: var(--spacing-unit);
+  overflow: hidden;
+  border-radius: var(--border-radius-md);
+  background-color: #eee;
+  display: flex; /* Thêm flex để căn giữa ảnh nếu nó nhỏ hơn max-height */
+  justify-content: center;
+  align-items: center;
+}
+
+.itemImage {
+  display: block; /* Thêm lại */
+  max-width: 100%;   /* Giới hạn theo container */
+  max-height: 100%; /* Giới hạn theo container */
+  width: auto;       /* Tự động width */
+  height: auto;      /* Tự động height */
+  object-fit: contain; /* Đổi thành contain để không bị cắt */
+  transition: transform 0.4s ease;
+}
+.itemPanel:hover .itemImage {
+    transform: scale(1.05); /* Zoom ảnh khi hover panel */
+}
+
+.itemLabel {
+  font-size: 1.2rem; /* Giảm nữa */
+  color: var(--text-color-dark);
+  font-weight: 600;
+  margin-top: auto;
+}
+
+/* --- VS Element Cách Điệu --- */
+/* --- Định nghĩa biến màu Danger RGB để dùng trong rgba --- */
+:root { --rgb-danger-color: 220, 53, 69; } /* Giá trị RGB của #dc3545 */
+
+.vsElement {
+  display: flex;
+  align-items: center; /* Căn giữa VS theo chiều dọc */
+  justify-content: center;
+  align-self: center; /* Tự căn giữa trong flex container */
+  width: 70px; /* Kích thước vòng tròn */
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--danger-color), color-mix(in srgb, var(--danger-color) 70%, var(--accent-color)));
+  box-shadow: 0 0 15px rgba(var(--rgb-danger-color), 0.3); /* Sử dụng biến RGB */
+  margin: 0 calc(var(--spacing-unit) * 0.5); /* Khoảng cách với panels */
+  animation: zoomInVs 0.6s ease-out forwards, pulseVs 2.5s infinite ease-in-out;
+  animation-delay: 0.6s, 1.5s; /* Delay khác nhau */
+  opacity: 0;
+}
+
+.vsText {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-color-inverted);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Khu vực Reveal */
+.revealSection {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px; /* Giảm nhẹ */
+  margin-top: auto; /* << ĐẨY XUỐNG DƯỚI CÙNG */
+  padding-bottom: var(--spacing-unit); /* Thêm padding dưới */
+  opacity: 0;
+  flex-shrink: 0; /* Ngăn co lại */
+}
+.revealSection.fadeInUpReveal { animation: fadeInUpReveal 0.6s ease-out forwards; animation-delay: 0.8s; }
+
+.revealButton {
+  padding: calc(var(--spacing-unit) * 0.7) calc(var(--spacing-unit) * 1.8); /* Giảm nhẹ */
+  font-size: 1.1rem; /* Giảm nhẹ */
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(45deg, var(--success-color), color-mix(in srgb, var(--success-color) 80%, var(--info-color)));
+  color: var(--text-color-inverted);
+  border: none;
+  border-radius: var(--border-radius-lg);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--box-shadow-medium);
+}
+.revealButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-large);
+}
+
+/* --- Nội dung đã Reveal --- */
+/* Thêm class isRevealed vào container chính khi reveal */
+.comparisonContainer.isRevealed .itemPanel {
+    opacity: 0.3; /* Làm mờ các panel */
+    filter: blur(3px);
+    pointer-events: none; /* Không cho hover nữa */
+    transition: opacity 0.5s ease, filter 0.5s ease;
+}
+.comparisonContainer.isRevealed .vsElement {
+    opacity: 0.2;
+    filter: blur(3px);
+    animation-play-state: paused; /* Dừng animation pulse */
+    transition: opacity 0.5s ease, filter 0.5s ease;
+}
+
+.revealedContent {
+  width: 70%;
+  max-width: 600px;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  border-radius: var(--border-radius-md);
+  padding: calc(var(--spacing-unit) * 1.5);
+  box-shadow: var(--box-shadow-large);
+  text-align: center;
+  border-top: 4px solid var(--accent-color); /* Viền trên màu nhấn */
+  /* Animation xuất hiện */
+  animation: revealContentAnim 0.5s ease-out forwards;
+  opacity: 0; /* Bắt đầu ẩn */
+}
+
+.revealedText {
+  font-size: 1.6rem;
+  color: var(--text-color-dark);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .itemsWrapper { flex-direction: column; align-items: center; gap: var(--spacing-unit); }
+  .itemPanel { max-width: 70%; } /* Điều chỉnh lại cho cột */
+  .imageContainer { max-height: 30vh; } /* Giảm chiều cao trên mobile */
+  .vsElement { width: 60px; height: 60px; margin: var(--spacing-unit) 0; animation: zoomInVs 0.6s ease-out forwards; animation-delay: 0.5s; /* Chỉ animation vào, bỏ pulse */ } /* Không pulse trên mobile */
+  .vsText { font-size: 1.8rem; }
+  .revealedContent { width: 90%; }
+  .revealedText { font-size: 1.4rem; }
+}
+/* ... (Thêm các điều chỉnh khác nếu cần) ... */

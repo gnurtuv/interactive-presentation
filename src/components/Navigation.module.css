@@ -1,0 +1,52 @@
+/* src/components/Navigation.module.css */
+.navigation {
+  position: absolute;
+  bottom: calc(var(--spacing-unit) * 0.625); /* 10px */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  /* Có thể làm nền tối hơn hoặc dùng màu primary */
+  background-color: rgba(0, 0, 0, 0.75); /* Nền đen mờ, có thể đậm hơn chút */
+  /* Hoặc thử: background-color: var(--primary-color); */
+  /* Nếu dùng màu primary thì các màu text bên trong phải là --text-color-inverted */
+  padding: calc(var(--spacing-unit) * 0.6) calc(var(--spacing-unit) * 1);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--box-shadow-medium); /* Bóng đổ rõ hơn */
+}
+
+.navButton {
+  background-color: var(--primary-color);
+  color: var(--text-color-inverted);
+  border: none;
+  padding: calc(var(--spacing-unit) * 0.6) var(--spacing-unit);
+  margin: 0 calc(var(--spacing-unit) * 0.5); /* Giảm margin chút */
+  border-radius: var(--border-radius-md); /* Bo góc vừa phải */
+  cursor: pointer;
+  font-size: 0.95em; /* Có thể nhỏ hơn chút */
+  transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.1s ease; /* Thêm transform */
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: var(--primary-hover-color); /* Sử dụng biến hover */
+  transform: translateY(-1px); /* Hiệu ứng nhấc lên khi hover */
+}
+
+.navButton:active:not(:disabled) {
+    transform: translateY(0px); /* Trả về vị trí cũ khi nhấn */
+}
+
+
+.navButton:disabled {
+  background-color: var(--secondary-color);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.slideCounter {
+  color: var(--text-color-inverted);
+  font-weight: bold;
+  min-width: 60px; /* Tăng nhẹ */
+  text-align: center;
+  font-size: 0.9em;
+}

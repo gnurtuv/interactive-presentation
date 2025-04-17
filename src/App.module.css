@@ -1,0 +1,12 @@
+/* src/App.module.css */
+.appContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  /* Xóa dòng background-color ở đây, để body trong index.css kiểm soát */
+  overflow: hidden;
+  position: relative;
+}
+
+/* Các style khác nếu cần */

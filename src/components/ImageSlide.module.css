@@ -1,0 +1,246 @@
+/* src/components/ImageSlide.module.css (Fixing Zoom BG & Dot Pattern) */
+
+.imageSlideContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: calc(var(--spacing-unit) * 2);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  background: linear-gradient(
+    160deg,
+    hsla(211, 100%, 97%, 0.4) 0%,
+    hsla(265, 100%, 97%, 0.3) 100%
+  );
+}
+
+/* --- Hình Khối Trang Trí --- */
+.decoShape {
+  position: absolute;
+  width: 35%; /* Chiều rộng của shape */
+  height: 70%; /* Chiều cao của shape */
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; /* Tạo hình dạng blob ngẫu nhiên */
+  opacity: 0; /* Bắt đầu ẩn */
+  z-index: 5; /* Nằm dưới cùng */
+  pointer-events: none;
+  filter: blur(20px); /* Làm mờ mạnh để tạo hiệu ứng mềm mại */
+  animation: fadeInShape 1.5s ease-out forwards, rotateShape 40s linear infinite alternate;
+  animation-delay: 0.4s; /* Xuất hiện sau các element chính */
+}
+
+.shapeLeft {
+  top: 10%;
+  left: -10%; /* Nằm lệch ra ngoài bên trái */
+  /* Gradient cho shape trái */
+  background: linear-gradient(45deg, hsla(211, 80%, 75%, 0.4), hsla(265, 60%, 80%, 0.35));
+  transform-origin: center center; /* Tâm xoay */
+}
+
+.shapeRight {
+  bottom: 10%;
+  right: -10%; /* Nằm lệch ra ngoài bên phải */
+  /* Gradient cho shape phải (có thể khác màu) */
+  background: linear-gradient(-45deg, hsla(30, 80%, 75%, 0.4), hsla(190, 70%, 85%, 0.35));
+  border-radius: 50% 50% 30% 70% / 60% 40% 70% 40%; /* Hình dạng khác chút */
+  animation-delay: 0.4s; /* Xuất hiện chậm hơn shape trái */
+  animation-duration: 1.4s, 40s; /* Thời gian animation khác chút */
+}
+
+/* Keyframes cho hiệu ứng xuất hiện */
+@keyframes fadeInShape {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 0.7; transform: scale(1); } /* Điều chỉnh opacity cuối cùng */
+}
+
+/* Keyframes cho hiệu ứng xoay chậm (tùy chọn) */
+@keyframes rotateShape {
+    from { transform: rotate(0deg) scale(1); }
+    to { transform: rotate(20deg) scale(1.05); } /* Xoay và scale nhẹ */
+}
+
+/* --- Họa tiết Nền (Tăng Kích Thước Chấm & Chỉnh Màu/Opacity) --- */
+.imageSlideContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* --- Dùng màu border và TĂNG KÍCH THƯỚC CHẤM --- */
+  background-image: radial-gradient(var(--border-color) 1.2px, transparent 1.2px); /* <<< Tăng lên 1px */
+  /* Hoặc thử 1.2px nếu 1px vẫn nhỏ */
+  background-size: 20px 20px; /* <<< Tăng khoảng cách nếu muốn */
+  /* --- Điều chỉnh lại OPACITY cho phù hợp --- */
+  opacity: 0.5; /* <<< Thử lại với opacity thấp hơn nhưng chấm to hơn */
+  /* --- Xóa border và z-index test --- */
+  /* border: 5px dashed limegreen !important; */
+  z-index: 0 !important; /* <<< Đặt lại z-index = 0 */
+  pointer-events: none;
+}
+
+/* --- Image Wrapper (Normal State) --- */
+.imageWrapper {
+  position: relative; /* Cần cho z-index */
+  width: auto;
+  max-width: 90%;
+  height: auto;
+  max-height: 65vh;
+  margin: 0 auto calc(var(--spacing-unit) * 1.5) auto;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--box-shadow-medium);
+  cursor: zoom-in;
+  z-index: 2; /* <<< Đặt cao hơn ::before */
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
+  opacity: 0;
+  transform: scale(0.95);
+  background-color: var(--slide-background-color); /* <<< GIỮ nền trắng che họa tiết sau ảnh */
+}
+
+/* Animation ban đầu */
+.imageWrapper.zoomIn {
+  animation: zoomInAppearAnimation 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-delay: 0.1s;
+}
+@keyframes zoomInAppearAnimation {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: inherit;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Hover */
+.imageWrapper:hover {
+  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4), var(--box-shadow-medium);
+}
+.imageWrapper:hover .image {
+  transform: scale(1.03);
+}
+
+
+/* --- Zoom Overlay (Rendered via Portal) --- */
+.zoomOverlayPortal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  cursor: zoom-out;
+  animation: fadeInOverlay 0.4s ease forwards;
+   /* Thêm backdrop-filter nếu muốn hiệu ứng blur */
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+@keyframes fadeInOverlay {
+    from { opacity: 0; backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);}
+    to { opacity: 1; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);}
+}
+
+
+/* --- Zoomed Image (Portal) --- */
+.imageWrapper.zoomedViaPortal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 90vw;
+  height: 90vh;
+  max-width: 90vw;
+  max-height: 90vh;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  box-shadow: var(--box-shadow-large);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  animation: scaleInZoomedImage 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  /* --- <<< XÓA DÒNG NÀY ĐỂ NỀN ZOOM TRONG SUỐT --- */
+  /* background-color: var(--slide-background-color); */
+}
+@keyframes scaleInZoomedImage {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.imageWrapper.zoomedViaPortal .image {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: inherit;
+  transform: scale(1);
+}
+
+/* --- Caption --- */
+.caption {
+  font-size: 1.4rem;
+  color: var(--text-color-light);
+  font-weight: 500;
+  text-align: center;
+  max-width: 75%;
+  padding: calc(var(--spacing-unit) * 0.5) var(--spacing-unit);
+  background-color: rgba(255, 255, 255, 0.75); /* Tăng nhẹ độ rõ nền caption */
+  backdrop-filter: blur(4px);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--box-shadow-light);
+  position: relative; /* Để nằm trên ::before */
+  z-index: 2; /* Cao hơn họa tiết ::before */
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+}
+/* Animation xuất hiện ban đầu */
+.caption.slideUp {
+  animation: slideUpAppearAnimation 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation-delay: 0.4s;
+  pointer-events: auto;
+}
+@keyframes slideUpAppearAnimation {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .imageWrapper { max-height: 60vh; }
+  .caption { font-size: 1.2rem; max-width: 85%; }
+  .imageWrapper.zoomedViaPortal { width: 95vw; height: 85vh; } /* Sửa class cho đúng */
+}
+@media (max-width: 480px) {
+   .imageWrapper { max-height: 55vh; }
+   .caption { font-size: 1rem; max-width: 90%; }
+   .imageWrapper.zoomedViaPortal { width: 98vw; height: 80vh; } /* Sửa class cho đúng */
+}
+@media (max-width: 768px) {
+  .decoShape {
+    width: 45%;
+    height: 60%;
+    filter: blur(15px);
+  }
+  .shapeLeft { left: -15%; }
+  .shapeRight { right: -15%; }
+  @keyframes fadeInShape { /* Điều chỉnh opacity cho màn hình nhỏ nếu cần */
+    to { opacity: 0.65; transform: scale(1); }
+  }
+}
+@media (max-width: 480px) {
+   .decoShape { display: none; } /* Có thể ẩn hoàn toàn trên màn hình rất nhỏ */
+}

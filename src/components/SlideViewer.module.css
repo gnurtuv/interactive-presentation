@@ -1,0 +1,15 @@
+/* src/components/SlideViewer.module.css */
+.slideContainer {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: calc(var(--spacing-unit) * 3); /* Tăng padding lên một chút */
+  text-align: center;
+  position: relative;
+  background-color: var(--slide-background-color);
+  box-shadow: var(--box-shadow-large); /* <-- Bóng đổ lớn hơn */
+  margin: calc(var(--spacing-unit) * 1.5); /* Tăng margin */
+  border-radius: var(--border-radius-lg); /* <-- Bo góc lớn hơn */
+  border: 1px solid var(--border-color);
+}

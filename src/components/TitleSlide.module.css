@@ -1,0 +1,192 @@
+/* src/components/TitleSlide.module.css */
+
+/* Container cho slide tiêu đề */
+.titleSlideContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: var(--spacing-unit);
+  text-align: center;
+  position: relative; /* Cần cho các hiệu ứng phức tạp hơn nếu có */
+  overflow: hidden; /* Ngăn các hiệu ứng tràn ra ngoài */
+
+  /* --- TÙY CHỌN NỀN --- */
+  /* Lựa chọn 2: Nếu dùng ảnh nền (Bỏ comment và bỏ Lựa chọn 1) */
+  
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  
+
+  /* Thêm lớp phủ tối nhẹ nếu dùng ảnh nền để chữ dễ đọc hơn */
+  /* position: relative; */ /* Đã có ở trên */
+}
+/* Nếu dùng ảnh nền và lớp phủ */
+
+/* Lớp phủ tối (Giữ nguyên hoặc điều chỉnh opacity) */
+.overlay {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.35); /* Có thể tăng nhẹ độ tối */
+  z-index: 1; /* Nằm trên background, dưới text và particles */
+}
+
+/* --- Hạt/Node mạng Động --- */
+.particleContainer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none; /* Không bắt sự kiện */
+    z-index: 2; /* Nằm trên overlay, dưới text */
+}
+
+.particle {
+  position: absolute;
+  width: 6px; /* Kích thước hạt */
+  height: 6px;
+  background-color: hsla(200, 100%, 80%, 0.6); /* Màu xanh nhạt, phát sáng nhẹ */
+  border-radius: 50%;
+  box-shadow: 0 0 8px 2px hsla(200, 100%, 80%, 0.5); /* Hiệu ứng glow */
+  /* Áp dụng 2 animation: một cho di chuyển, một cho nhấp nháy */
+  animation-name: floatParticle, pulseParticle;
+  animation-timing-function: ease-in-out, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+  animation-direction: alternate, alternate;
+  opacity: 0; /* Bắt đầu ẩn */
+}
+
+/* Animation di chuyển lơ lửng */
+@keyframes floatParticle {
+  from { transform: translateY(0px) translateX(0px) scale(1); opacity: 0; }
+  20% { opacity: 0.8; } /* Hiện ra từ từ */
+  80% { opacity: 0.7; } /* Giữ độ sáng */
+  to { transform: translateY(-20px) translateX(15px) scale(0.8); opacity: 0; } /* Di chuyển và mờ dần */
+}
+
+/* Animation nhấp nháy/thay đổi kích thước */
+@keyframes pulseParticle {
+  from { transform: scale(0.8); box-shadow: 0 0 6px 1px hsla(200, 100%, 80%, 0.4); }
+  to { transform: scale(1.2); box-shadow: 0 0 12px 3px hsla(200, 100%, 80%, 0.6); }
+}
+
+/* --- Text Styling và Shimmer --- */
+.textWrapper {
+  position: relative; /* Để chứa hiệu ứng shimmer */
+  z-index: 3; /* Nằm trên particles */
+}
+
+.titleSlideContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.title {
+  font-size: 4.5rem;
+  margin-bottom: calc(var(--spacing-unit) * 1.5);
+  color: var(--text-color-inverted);
+  font-weight: 700;
+  line-height: 1.2;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Tăng nhẹ shadow */
+  position: relative; /* Cần cho shimmer ::after */
+  z-index: 1; /* Đảm bảo nằm trên ::after của wrapper */
+  opacity: 0; /* Cho animation fadeInUp */
+  /* Thêm một lớp background để hiệu ứng shimmer rõ hơn */
+   background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+   background-clip: text;
+   -webkit-background-clip: text;
+   /* color: transparent; */ /* Không làm transparent vì đã có màu gốc */
+}
+
+/* Hiệu ứng Shimmer */
+.textWrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%; /* Bắt đầu bên ngoài trái */
+  width: 100%;
+  height: 100%;
+  /* Gradient ánh sáng trắng nghiêng */
+  background: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 0.6) 50%, /* Ánh sáng trắng rõ hơn */
+      rgba(255, 255, 255, 0) 80%
+  );
+  transform: skewX(-25deg); /* Nghiêng */
+  z-index: 0; /* Nằm dưới title nhưng trên background wrapper */
+  opacity: 0; /* Bắt đầu ẩn */
+  /* Animation chạy ngang qua */
+  animation: shimmerText 3s ease-in-out 1s forwards; /* Delay 1s sau khi text hiện */
+}
+
+@keyframes shimmerText {
+  0% { left: -150%; opacity: 0; }
+  20% { opacity: 1; } /* Bắt đầu hiện rõ */
+  80% { opacity: 1; } /* Giữ độ rõ */
+  100% { left: 150%; opacity: 0; } /* Di chuyển qua phải và biến mất */
+}
+
+.subtitle {
+  font-size: 2.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+  position: relative;
+  z-index: 3; /* Nằm trên particles */
+  opacity: 0; /* Cho animation fadeInUpDelay */
+}
+
+/* --- ANIMATIONS --- */
+
+/* Keyframes cho animation chuyển màu gradient */
+@keyframes gradientBG {
+	0% { background-position: 0% 50%; }
+	50% { background-position: 100% 50%; }
+	100% { background-position: 0% 50%; }
+}
+
+/* Keyframes cho hiệu ứng fade-in và trượt lên */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Áp dụng animation */
+.fadeInUp { animation: fadeInUp 0.8s ease-out forwards; animation-delay: 0.2s; }
+.fadeInUpDelay { animation: fadeInUp 0.8s ease-out 0.5s forwards; }
+
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+  .title {
+    font-size: 3.5rem;
+  }
+  .subtitle {
+    font-size: 1.8rem;
+  }
+}
+@media (max-width: 768px) {
+  .title { font-size: 3rem; }
+  .subtitle { font-size: 1.6rem; }
+  .particle { width: 3px; height: 3px; box-shadow: 0 0 6px 1px hsla(200, 100%, 80%, 0.4); }
+}
+@media (max-width: 480px) {
+  .title { font-size: 2.4rem; }
+  .subtitle { font-size: 1.3rem; }
+  .particleContainer { display: none; } /* Ẩn hạt trên màn hình rất nhỏ */
+}
